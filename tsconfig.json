@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es5",
+    "jsx": "react",
+    "allowJs": true,
+    "checkJs": false,
+    "outDir": "./build",
+    "strict": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "moduleResolution": "node",
+    "typeRoots": [
+      "./types",
+      "./node_modules/@types",
+    ],
+    "sourceMap": true,
+  },
+  "exclude": [
+    "**/*.ignore.*",
+    "./node_modules/",
+    "./dist/",
+    "./build/"
+  ],
+  "ts-node": {
+    "files" : true
+  }
+}

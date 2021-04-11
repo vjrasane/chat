@@ -1,0 +1,85 @@
+version: "3.7"
+
+services:
+    auth-server:
+        image: node:15
+        command: yarn start:auth
+        working_dir: /usr/auth
+        environment:
+            DB_HOST: auth-db
+            DB_USER: auth-user
+            DB_PASSWORD: auth-pass
+            DB_NAME: db
+            LOG_LEVEL: debug
+        depends_on:
+            - auth-db
+        volumes:
+            - ./:/usr/auth
+        ports:
+            - 3001:3000
+
+    auth-db:
+        image: mongo
+        volumes:
+            - auth-data:/data/db
+            - ./scripts/init-auth-db.js:/docker-entrypoint-initdb.d/mongo-init.js
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: root
+            MONGO_INITDB_ROOT_PASSWORD: root
+        command: mongod --port 27017 --bind_ip_all
+        ports:
+            - 27017:27017
+
+    api-server:
+        image: node:15
+        command: yarn start:api
+        working_dir: /usr/api
+        environment:
+            DB_HOST: api-db
+            DB_USER: api-user
+            DB_PASSWORD: api-pass
+            DB_NAME: db
+            LOG_LEVEL: debug
+        depends_on:
+            - api-db
+        volumes:
+            - ./:/usr/api
+        ports:
+            - 3002:3000
+
+    api-db:
+        image: mongo
+        volumes:
+            - api-data:/data/db
+            - ./scripts/init-api-db.js:/docker-entrypoint-initdb.d/mongo-init.js
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: root
+            MONGO_INITDB_ROOT_PASSWORD: root
+        command: mongod --port 27017 --bind_ip_all
+        ports:
+            - 27018:27017
+
+    web-server:
+        image: node:15
+        command: yarn start:webapp
+        working_dir: /usr/webapp
+        volumes:
+            - ./:/usr/webapp
+        ports:
+            - 9000:3000
+
+    nginx:
+        image: nginx:mainline-alpine
+        ports:
+            - 8000:80
+            - 443:443
+        volumes:
+            - ./certs:/etc/nginx-certs
+            - ./config/nginx.conf:/etc/nginx/conf.d/nginx.conf
+        depends_on:
+            - auth-server
+            - web-server
+
+volumes:
+  auth-data:
+  api-data:

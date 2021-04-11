@@ -1,0 +1,14 @@
+version: "3.7"
+
+services:
+    minica-ssl-certs:
+      image: twalter/minica
+      command: --ca-cert ca.pem --ca-key ca-key.pem --domains localhost
+      volumes:
+          - ./certs:/output
+
+    openssl-dhparams:
+        image: frapsoft/openssl
+        command: dhparam -out /export/dhparam.pem 1024
+        volumes:
+            - ./certs:/export

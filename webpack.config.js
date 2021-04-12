@@ -16,6 +16,17 @@ module.exports = {
     compress: true,
     port: 9000,
     open: true,
+    historyApiFallback: true,
+    proxy: {
+      "/api": {
+        target: "https://localhost:443",
+        secure: false
+      },
+      "/auth": {
+        target: "https://localhost:443",
+        secure: false
+      }
+    }
   },
   target: "web",
   resolve: {
